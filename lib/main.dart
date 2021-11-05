@@ -33,31 +33,32 @@ class SplashScreenState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.yellow,
-        // child:FlutterLogo(size:MediaQuery.of(context).size.height)
-        child: FutureBuilder(
-          future: future,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              {
-                Timer(Duration(seconds: 1),
-                        ()=>Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder:
-                            (context) => HomeScreen(todo:snapshot.data)
-                        )
-                    )
-                );
-              }
+      color: Colors.yellow,
+      // child:FlutterLogo(size:MediaQuery.of(context).size.height)
+      child: FutureBuilder(
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasData) {
+            {
+              Timer(Duration(seconds: 1),
+                      ()=>Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder:
+                          (context) => HomeScreen(todo:snapshot.data)
+                      )
+                  )
+              );
               return Text("");
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
             }
 
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
 
-        ),
+          // By default, show a loading spinner.
+          return const CircularProgressIndicator();
+        },
+
+      ),
     );
   }
 

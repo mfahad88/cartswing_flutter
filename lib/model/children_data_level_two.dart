@@ -1,7 +1,6 @@
-// @dart=2.10
 
 class Children_data_level_two {
-  Children_data_level_two({
+  Children_data_level_two(
       this.id, 
       this.parentId, 
       this.name, 
@@ -9,7 +8,7 @@ class Children_data_level_two {
       this.isActive, 
       this.position, 
       this.level, 
-      this.hasChildren,});
+      this.hasChildren);
 
   Children_data_level_two.fromJson(dynamic json) {
     id = json['id'];
@@ -21,14 +20,14 @@ class Children_data_level_two {
     level = json['level'];
     hasChildren = json['hasChildren'];
   }
-  String id;
-  String parentId;
-  String name;
-  String url;
-  String isActive;
-  String position;
-  String level;
-  int hasChildren;
+  String? id;
+  String? parentId;
+  String? name;
+  String? url;
+  String? isActive;
+  String? position;
+  String? level;
+  int? hasChildren;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

@@ -1,9 +1,8 @@
-// @dart=2.10
 
 import 'children_data_level_one.dart';
 
 class Categories {
-  Categories({
+  Categories(
       this.id, 
       this.parentId, 
       this.name, 
@@ -12,7 +11,7 @@ class Categories {
       this.position, 
       this.level, 
       this.hasChildren, 
-      this.childrenDataLevelOne,});
+      this.childrenDataLevelOne);
 
   Categories.fromJson(dynamic json) {
     id = json['id'];
@@ -26,19 +25,19 @@ class Categories {
     if (json['children_data_level_one'] != null) {
       childrenDataLevelOne = [];
       json['children_data_level_one'].forEach((v) {
-        childrenDataLevelOne.add(Children_data_level_one.fromJson(v));
+        childrenDataLevelOne!.add(Children_data_level_one.fromJson(v));
       });
     }
   }
-  String id;
-  int parentId;
-  String name;
-  String url;
-  String isActive;
-  String position;
-  String level;
-  int hasChildren;
-  List<Children_data_level_one> childrenDataLevelOne;
+  String? id;
+  int? parentId;
+  String? name;
+  String? url;
+  String? isActive;
+  String? position;
+  String? level;
+  int? hasChildren;
+  List<Children_data_level_one>? childrenDataLevelOne;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -51,7 +50,7 @@ class Categories {
     map['level'] = level;
     map['hasChildren'] = hasChildren;
     if (childrenDataLevelOne != null) {
-      map['children_data_level_one'] = childrenDataLevelOne.map((v) => v.toJson()).toList();
+      map['children_data_level_one'] = childrenDataLevelOne!.map((v) => v.toJson()).toList();
     }
     return map;
   }

@@ -1,13 +1,13 @@
-// @dart=2.10
+
 
 class Links {
-  Links({
+  Links(
       this.home, 
       this.search, 
       this.wallet, 
       this.cart, 
       this.wishlist, 
-      this.myaccount,});
+      this.myaccount);
 
   Links.fromJson(dynamic json) {
     home = json['home'];
@@ -17,12 +17,12 @@ class Links {
     wishlist = json['wishlist'];
     myaccount = json['myaccount'];
   }
-  String home;
-  String search;
-  String wallet;
-  String cart;
-  String wishlist;
-  String myaccount;
+  String? home;
+  String? search;
+  String? wallet;
+  String? cart;
+  String? wishlist;
+  String? myaccount;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

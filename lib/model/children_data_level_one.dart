@@ -1,11 +1,9 @@
-// @dart=2.10
 
 
-
-import 'package:cartswing/children_data_level_two.dart';
+import 'package:cartswing/model/children_data_level_two.dart';
 
 class Children_data_level_one {
-  Children_data_level_one({
+  Children_data_level_one(
       this.id, 
       this.parentId, 
       this.name, 
@@ -14,7 +12,7 @@ class Children_data_level_one {
       this.position, 
       this.level, 
       this.hasChildren, 
-      this.childrenDataLevelTwo,});
+      this.childrenDataLevelTwo);
 
   Children_data_level_one.fromJson(dynamic json) {
     id = json['id'];
@@ -28,19 +26,19 @@ class Children_data_level_one {
     if (json['children_data_level_two'] != null) {
       childrenDataLevelTwo = [];
       json['children_data_level_two'].forEach((v) {
-        childrenDataLevelTwo.add(Children_data_level_two.fromJson(v));
+        childrenDataLevelTwo!.add(Children_data_level_two.fromJson(v));
       });
     }
   }
-  String id;
-  String parentId;
-  String name;
-  String url;
-  String isActive;
-  String position;
-  String level;
-  int hasChildren;
-  List<Children_data_level_two> childrenDataLevelTwo;
+  String? id;
+  String? parentId;
+  String? name;
+  String? url;
+  String? isActive;
+  String? position;
+  String? level;
+  int? hasChildren;
+  List<Children_data_level_two>? childrenDataLevelTwo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -53,7 +51,7 @@ class Children_data_level_one {
     map['level'] = level;
     map['hasChildren'] = hasChildren;
     if (childrenDataLevelTwo != null) {
-      map['children_data_level_two'] = childrenDataLevelTwo.map((v) => v.toJson()).toList();
+      map['children_data_level_two'] = childrenDataLevelTwo!.map((v) => v.toJson()).toList();
     }
     return map;
   }
