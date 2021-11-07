@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cartswing/model/data.dart';
 import 'package:flutter/material.dart';
 
 import 'homescreen.dart';
@@ -23,7 +24,7 @@ class MyHomePage extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 class SplashScreenState extends State<MyHomePage> {
-  late Future future;
+  late Future<Data> future;
   @override
   void initState() {
     super.initState();
@@ -33,11 +34,16 @@ class SplashScreenState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.yellow,
+      decoration: BoxDecoration(
+        image: new DecorationImage(
+          image: new AssetImage('images/splash_scrn.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
       // child:FlutterLogo(size:MediaQuery.of(context).size.height)
       child: FutureBuilder(
         future: future,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Data> snapshot) {
           if (snapshot.hasData) {
             {
               Timer(Duration(seconds: 1),
@@ -55,7 +61,7 @@ class SplashScreenState extends State<MyHomePage> {
           }
 
           // By default, show a loading spinner.
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         },
 
       ),
@@ -63,14 +69,15 @@ class SplashScreenState extends State<MyHomePage> {
   }
 
 
-  Future fetchData() async {
+  Future<Data> fetchData() async {
     final response = await http
         .get(Uri.parse('https://csapi.piknpak.com.pk/index.php/rest/V1/mobileapi/menu'));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return jsonDecode(response.body);
+      Data data=Data.fromJson(jsonDecode(response.body)[0]);
+      return data;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

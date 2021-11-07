@@ -23,9 +23,9 @@ class Children_data_level_one {
     position = json['position'];
     level = json['level'];
     hasChildren = json['hasChildren'];
-    if (json['children_data_level_two'] != null) {
+    if (json['children_data'] != null) {
       childrenDataLevelTwo = [];
-      json['children_data_level_two'].forEach((v) {
+      json['children_data'].forEach((v) {
         childrenDataLevelTwo!.add(Children_data_level_two.fromJson(v));
       });
     }
@@ -51,7 +51,7 @@ class Children_data_level_one {
     map['level'] = level;
     map['hasChildren'] = hasChildren;
     if (childrenDataLevelTwo != null) {
-      map['children_data_level_two'] = childrenDataLevelTwo!.map((v) => v.toJson()).toList();
+      map['children_data'] = childrenDataLevelTwo!.map((v) => v.toJson()).toList();
     }
     return map;
   }

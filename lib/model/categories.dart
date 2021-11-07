@@ -22,9 +22,9 @@ class Categories {
     position = json['position'];
     level = json['level'];
     hasChildren = json['hasChildren'];
-    if (json['children_data_level_one'] != null) {
+    if (json['children_data'] != null) {
       childrenDataLevelOne = [];
-      json['children_data_level_one'].forEach((v) {
+      json['children_data'].forEach((v) {
         childrenDataLevelOne!.add(Children_data_level_one.fromJson(v));
       });
     }
@@ -32,7 +32,7 @@ class Categories {
   String? id;
   int? parentId;
   String? name;
-  String? url;
+  String url="";
   String? isActive;
   String? position;
   String? level;
@@ -50,7 +50,7 @@ class Categories {
     map['level'] = level;
     map['hasChildren'] = hasChildren;
     if (childrenDataLevelOne != null) {
-      map['children_data_level_one'] = childrenDataLevelOne!.map((v) => v.toJson()).toList();
+      map['children_data'] = childrenDataLevelOne!.map((v) => v.toJson()).toList();
     }
     return map;
   }
