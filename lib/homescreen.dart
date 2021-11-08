@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cartswing/datasearch.dart';
 import 'package:cartswing/model/categories.dart';
 import 'package:cartswing/model/data.dart';
@@ -71,114 +72,88 @@ class _HomeScreenState extends State<HomeScreen> {
       onWillPop: () => _onBack(),
       child: ModalProgressHUD(
         inAsyncCall: inAsyncCall,
-        child: MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(
-                title: Center(
-                    child: Image.asset(
-                  'images/app_icon_transparent.png',
-                  fit: BoxFit.cover,
-                  height: 30,
-                )),
-                backgroundColor: Colors.white,
-                iconTheme: IconThemeData(color: Colors.black),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        showSearch(context: context, delegate: DataSearch());
-                      },
-                      icon: Icon(Icons.search))
-                ]),
-            drawer: MyDrawer(
-              list: widget.todo!.categories,
-              onTap: (context, url) {
-                setState(() {
-                  Navigator.pop(context);
-                  controller.loadUrl(url!);
-                });
-              },
-            ),
-            body: Stack(
-              children: [
-                WebView(
-                  javascriptMode: JavascriptMode.unrestricted,
-                  initialUrl: array.elementAt(_currentIndex),
-                  onWebViewCreated: (WebViewController webViewController) {
-                    controller = webViewController;
-                    _controller.complete(webViewController);
-                  },
+        child: Scaffold(
+          appBar: AppBar(
+              title: Center(
+                  child: Image.asset(
+                    'images/app_icon_transparent.png',
+                    fit: BoxFit.cover,
+                    height: 30,
+                  )),
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(color: Colors.black),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      showSearch(context: context, delegate: DataSearch());
+                    },
+                    icon: Icon(Icons.search))
+              ]),
+          drawer: MyDrawer(
+            list: widget.todo!.categories,
+            onTap: (context, url) {
+              setState(() {
 
-                  onProgress: (progress) {
-                    print("Finished----> ${progress}");
-                    if (progress > 80) {
-                      setState(() {
-                        inAsyncCall = false;
-                      });
-                    }
-                  },
-                  onPageStarted: (url) {
-                    setState(() {
-                      inAsyncCall = true;
-                    });
-                  },
-                  onPageFinished: (url) {
-                    setState(() {
-                      inAsyncCall = false;
-                    });
-                  },
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      inAsyncCall=true;
-                    });
-                  },
-                )
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              //Floating action button on Scaffold
-              backgroundColor: Colors.orange.shade700,
-              onPressed: () {
+                controller.loadUrl(url!);
+              });
+            },
+          ),
+          body:   WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: array.elementAt(_currentIndex),
+            onWebViewCreated: (WebViewController webViewController) {
+              controller = webViewController;
+              _controller.complete(webViewController);
+            },
+
+            onProgress: (progress) {
+              print("Finished----> ${progress}");
+              if (progress > 90) {
                 setState(() {
-                  controller.loadUrl(widget.todo!.links?.cart ?? "",
-                      headers: {"MOBILEAPP": "1"});
+                  inAsyncCall = false;
                 });
-              },
-              child: Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ), //icon inside button
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: MyBottomBar(
-              onPressed: (context, url) {
-                setState(() => {});
-                controller.loadUrl(url!, headers: {"MOBILEAPP": "1"});
-              },
-              links: widget.todo!.links,
-            ),
+              }
+            },
+            onPageStarted: (url) {
+              setState(() {
+                inAsyncCall = true;
+              });
+            },
+            onPageFinished: (url) {
+              setState(() {
+                inAsyncCall = false;
+              });
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            //Floating action button on Scaffold
+            backgroundColor: Colors.orange.shade700,
+            onPressed: () {
+              setState(() {
+                controller.loadUrl(widget.todo!.links?.cart ?? "",
+                    headers: {"MOBILEAPP": "1"});
+              });
+            },
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ), //icon inside button
+          ),
+          floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: MyBottomBar(
+            onPressed: (context, url) {
+              setState(() => {});
+              controller.loadUrl(url!, headers: {"MOBILEAPP": "1"});
+            },
+            links: widget.todo!.links,
           ),
         ),
       ),
     );
   }
 
-  Future<bool> _exitApp(BuildContext context) async {
-    WebViewController webViewController = await _controller.future;
 
-    if (await webViewController.canGoBack()) {
-      print("onwill goback");
-      webViewController.goBack();
-      return Future.value(true);
-    } else {
-      Scaffold.of(context).showSnackBar(
-        const SnackBar(content: Text("No back history item")),
-      );
-      return Future.value(false);
-    }
-  }
 
   Future<bool> _onBack() async {
     bool goBack = false;
@@ -204,7 +179,9 @@ class _HomeScreenState extends State<HomeScreen> {
             new FlatButton(
               onPressed: () {
                 // Navigator.of(context).pop(false);
-                SystemNavigator.pop();
+                Platform.isIOS
+                    ? exit(0)
+                    : SystemChannels.platform.invokeMethod('SystemNavigator.pop');
 
                 setState(() {
                   goBack = false;
@@ -215,8 +192,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             new FlatButton(
               onPressed: () {
-                // Navigator.of(context).pop();
-                Navigator.of(context).pop(true);
+
+                Navigator.pop(context,false);
+                // Navigator.of(context).pop(true);
 
                 setState(() {
                   goBack = true;
