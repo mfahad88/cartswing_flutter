@@ -2,11 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:cartswing/model/data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'homescreen.dart';
 import 'package:http/http.dart' as http;
 
-void main() { runApp(MyApp());}
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(new MyApp()));
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 
@@ -84,6 +89,9 @@ class SplashScreenState extends State<MyHomePage> {
       throw Exception('Failed to load album');
     }
   }
+
+
+
 }
 
 

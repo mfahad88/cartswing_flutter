@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -8,12 +7,14 @@ import 'package:cartswing/model/data.dart';
 import 'package:cartswing/mybottombar.dart';
 import 'package:cartswing/mydrawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'drawer_data.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key,required this.todo}) : super(key: key);
+  const HomeScreen({Key? key, required this.todo}) : super(key: key);
   final Data? todo;
 
   @override
@@ -21,11 +22,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  List array = [];
   late WebViewController controller;
-  List<DrawerData> list=[];
-  bool isSearch=true;
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+  final int _currentIndex = 0;
+  List array = [];
+  List<DrawerData> list = [];
+  bool isSearch = true;
+  bool inAsyncCall = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -61,56 +65,174 @@ class _HomeScreenState extends State<HomeScreen> {
     }*/
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-              title: Center(child: Image.asset('images/app_icon_transparent.png', fit: BoxFit.cover, height: 30,)),
-              backgroundColor: Colors.white,
-              iconTheme: IconThemeData(color: Colors.black),
-              actions: [
-                IconButton(onPressed: () {
-                  showSearch(context: context, delegate: DataSearch());
-                }, icon: Icon(Icons.search))
-              ]
+    return WillPopScope(
+      onWillPop: () => _onBack(),
+      child: ModalProgressHUD(
+        inAsyncCall: inAsyncCall,
+        child: MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+                title: Center(
+                    child: Image.asset(
+                  'images/app_icon_transparent.png',
+                  fit: BoxFit.cover,
+                  height: 30,
+                )),
+                backgroundColor: Colors.white,
+                iconTheme: IconThemeData(color: Colors.black),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        showSearch(context: context, delegate: DataSearch());
+                      },
+                      icon: Icon(Icons.search))
+                ]),
+            drawer: MyDrawer(
+              list: widget.todo!.categories,
+              onTap: (context, url) {
+                setState(() {
+                  Navigator.pop(context);
+                  controller.loadUrl(url!);
+                });
+              },
+            ),
+            body: Stack(
+              children: [
+                WebView(
+                  javascriptMode: JavascriptMode.unrestricted,
+                  initialUrl: array.elementAt(_currentIndex),
+                  onWebViewCreated: (WebViewController webViewController) {
+                    controller = webViewController;
+                    _controller.complete(webViewController);
+                  },
+
+                  onProgress: (progress) {
+                    print("Finished----> ${progress}");
+                    if (progress > 80) {
+                      setState(() {
+                        inAsyncCall = false;
+                      });
+                    }
+                  },
+                  onPageStarted: (url) {
+                    setState(() {
+                      inAsyncCall = true;
+                    });
+                  },
+                  onPageFinished: (url) {
+                    setState(() {
+                      inAsyncCall = false;
+                    });
+                  },
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      inAsyncCall=true;
+                    });
+                  },
+                )
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              //Floating action button on Scaffold
+              backgroundColor: Colors.orange.shade700,
+              onPressed: () {
+                setState(() {
+                  controller.loadUrl(widget.todo!.links?.cart ?? "",
+                      headers: {"MOBILEAPP": "1"});
+                });
+              },
+              child: Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ), //icon inside button
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: MyBottomBar(
+              onPressed: (context, url) {
+                setState(() => {});
+                controller.loadUrl(url!, headers: {"MOBILEAPP": "1"});
+              },
+              links: widget.todo!.links,
+            ),
           ),
-          drawer:MyDrawer(list: widget.todo!.categories,
-            onTap:  (context, url) {
-              setState(() {
-                Navigator.pop(context);
-                controller.loadUrl(url!);
-              });
-            },
-          ),
-          body:
-           WebView(
-              javascriptMode: JavascriptMode.unrestricted,
-              initialUrl: array.elementAt(_currentIndex),
-              onWebViewCreated: (WebViewController webViewController) {
-                controller = webViewController;
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _exitApp(BuildContext context) async {
+    WebViewController webViewController = await _controller.future;
+
+    if (await webViewController.canGoBack()) {
+      print("onwill goback");
+      webViewController.goBack();
+      return Future.value(true);
+    } else {
+      Scaffold.of(context).showSnackBar(
+        const SnackBar(content: Text("No back history item")),
+      );
+      return Future.value(false);
+    }
+  }
+
+  Future<bool> _onBack() async {
+    bool goBack = false;
+    var value = await controller.canGoBack(); // check webview can go back
+    if (value) {
+      controller.goBack(); // perform webview back operation
+      return false;
+    } else {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => new AlertDialog(
+          title:
+              new Text('Confirmation ', style: TextStyle(color: Colors.purple)),
+
+          // Are you sure?
+
+          content: new Text('Do you want exit app ? '),
+
+          // Do you want to go back?
+
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                // Navigator.of(context).pop(false);
+                SystemNavigator.pop();
+
+                setState(() {
+                  goBack = false;
+                });
               },
 
+              child: new Text('Yes'), // No
+            ),
+            new FlatButton(
+              onPressed: () {
+                // Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
+
+                setState(() {
+                  goBack = true;
+                });
+              },
+
+              child: new Text('No'), // Yes
 
             ),
-          floatingActionButton:FloatingActionButton( //Floating action button on Scaffold
-            backgroundColor: Colors.orange.shade700,
-            onPressed: (){
-              setState(() =>{});
-              controller.loadUrl(widget.todo!.links?.cart??"",headers: {"MOBILEAPP":"1"});  //code to execute on button press
-            },
-            child: Icon(Icons.shopping_cart,color: Colors.white,), //icon inside button
-          ),
-
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: MyBottomBar(onPressed: (context, url) {
-            setState(() =>{});
-            controller.loadUrl(url!,headers: {"MOBILEAPP":"1"});
-          }, links: widget.todo!.links,),
+          ],
         ),
       );
 
-  }
+      if (goBack) Navigator.pop(context); // If user press Yes pop the page
 
+      return goBack;
+    }
+  }
 }
