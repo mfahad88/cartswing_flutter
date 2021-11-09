@@ -1,10 +1,12 @@
+// @dart=2.9
+
 import 'package:cartswing/model/links.dart';
 import 'package:flutter/material.dart';
 
 class MyBottomBar extends StatelessWidget {
-  const MyBottomBar({Key? key,required this.links,required this.onPressed}) : super(key: key);
-  final void Function(BuildContext context,String? url) onPressed;
-  final Links? links;
+  const MyBottomBar({Key key,this.links,this.onPressed}) : super(key: key);
+  final void Function(BuildContext context,String url) onPressed;
+  final Links links;
   @override
   Widget build(BuildContext context) {
     int _currentIndex=0;
@@ -18,10 +20,10 @@ class MyBottomBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          IconButton(icon: Icon(Icons.home, color: Colors.white,), onPressed: () => onPressed(context,links!.home),),
-          Container(margin: EdgeInsets.only(right: 100),child: IconButton(icon: Icon(Icons.account_balance_wallet, color: Colors.white,), onPressed: () => onPressed(context,links!.wallet),)),
-          IconButton(icon: Icon(Icons.favorite, color: Colors.white,), onPressed: () => onPressed(context,links!.wishlist),),
-          IconButton(icon: Icon(Icons.account_circle, color: Colors.white,), onPressed: () => onPressed(context,links!.myaccount),),
+          IconButton(icon: Icon(Icons.home, color: Colors.white,), onPressed: () => onPressed(context,links.home),),
+          Container(margin: EdgeInsets.only(right: 100),child: IconButton(icon: Icon(Icons.account_balance_wallet, color: Colors.white,), onPressed: () => onPressed(context,links.wallet),)),
+          IconButton(icon: Icon(Icons.favorite, color: Colors.white,), onPressed: () => onPressed(context,links.wishlist),),
+          IconButton(icon: Icon(Icons.account_circle, color: Colors.white,), onPressed: () => onPressed(context,links.myaccount),),
         ],
       ),
     );

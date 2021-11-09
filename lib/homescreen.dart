@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -13,15 +15,15 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.todo}) : super(key: key);
-  final Data? todo;
+  const HomeScreen({Key key, this.todo}) : super(key: key);
+  final Data todo;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late WebViewController controller;
+  WebViewController controller;
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
   final int _currentIndex = 0;
@@ -36,12 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (Platform.isIOS) WebView.platform = CupertinoWebView();
 
 
-    array.add(widget.todo!.links!.home);
-    array.add(widget.todo!.links!.search);
-    array.add(widget.todo!.links!.cart);
-    array.add(widget.todo!.links!.wallet);
-    array.add(widget.todo!.links!.wishlist);
-    array.add(widget.todo!.links!.myaccount);
+    array.add(widget.todo.links.home);
+    array.add(widget.todo.links.search);
+    array.add(widget.todo.links.cart);
+    array.add(widget.todo.links.wallet);
+    array.add(widget.todo.links.wishlist);
+    array.add(widget.todo.links.myaccount);
 
   }
 
@@ -73,17 +75,17 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 IconButton(
                     onPressed: () {
-                      showSearch(context: context, delegate: DataSearch(widget.todo!.links!.search));
+                      showSearch(context: context, delegate: DataSearch(widget.todo.links.search));
                     },
                     icon: Icon(Icons.search))
               ]),
           drawer: MyDrawer(
-            list: widget.todo!.categories,
+            list: widget.todo.categories,
 
             onTap: (context, url) {
               setState(() {
 
-                controller.loadUrl(url!);
+                controller.loadUrl(url);
               });
             },
           ),
@@ -126,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.orange.shade700,
             onPressed: () {
               setState(() {
-                controller.loadUrl(widget.todo!.links?.cart ?? "");
+                controller.loadUrl(widget.todo.links?.cart ?? "");
               });
             },
             child: Icon(
@@ -139,9 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
           bottomNavigationBar: MyBottomBar(
             onPressed: (context, url) {
               setState(() => {});
-              controller.loadUrl(url!);
+              controller.loadUrl(url);
             },
-            links: widget.todo!.links,
+            links: widget.todo.links,
           ),
         ),
       ),

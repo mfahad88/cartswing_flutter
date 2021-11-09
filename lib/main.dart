@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:async';
 import 'dart:convert';
 import 'package:cartswing/model/data.dart';
@@ -29,7 +30,7 @@ class MyHomePage extends StatefulWidget {
   SplashScreenState createState() => SplashScreenState();
 }
 class SplashScreenState extends State<MyHomePage> {
-  late Future<Data> future;
+  Future<Data> future;
   @override
   void initState() {
     super.initState();
