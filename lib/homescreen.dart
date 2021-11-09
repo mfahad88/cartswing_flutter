@@ -12,8 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import 'drawer_data.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.todo}) : super(key: key);
   final Data? todo;
@@ -28,20 +26,15 @@ class _HomeScreenState extends State<HomeScreen> {
       Completer<WebViewController>();
   final int _currentIndex = 0;
   List array = [];
-  List<DrawerData> list = [];
   bool isSearch = true;
   bool inAsyncCall = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // List<dynamic> dn_list=widget.todo!.categories!.cast<List<dynamic>>();
-    // array.add(widget.todo[0]["links"]["home"]);
-    // array.add(widget.todo[0]["links"]["search"]);
-    // array.add(widget.todo[0]["links"]["cart"]);
-    // array.add(widget.todo[0]["links"]["wallet"]);
-    // array.add(widget.todo[0]["links"]["wishlist"]);
-    // array.add(widget.todo[0]["links"]["myaccount"]);
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    if (Platform.isIOS) WebView.platform = CupertinoWebView();
+
 
     array.add(widget.todo!.links!.home);
     array.add(widget.todo!.links!.search);
@@ -49,30 +42,25 @@ class _HomeScreenState extends State<HomeScreen> {
     array.add(widget.todo!.links!.wallet);
     array.add(widget.todo!.links!.wishlist);
     array.add(widget.todo!.links!.myaccount);
-    /*for(int i=0;i<dn_list.length;i++) {
-      list.add(DrawerData( dn_list[i]["name"],  dn_list[i]["url"],  int.parse(dn_list[i]["level"])));
-      List<dynamic> children_data=dn_list[i]["children_data"];
-      if(children_data.length>0){
-        for(int j=0;j<children_data.length;j++){
-          list.add(DrawerData(children_data[j]["name"], children_data[j]["url"], int.parse(children_data[j]["level"])));
-          List<dynamic> children_data_second=dn_list[j]["children_data"];
-          if(children_data_second.length>0){
-            for(int k=0;k<children_data_second.length;k++){
-              list.add(DrawerData(children_data_second[k]["name"], children_data_second[k]["url"], int.parse(children_data_second[k]["level"])));
-            }
-          }
-        }
-      }
-    }*/
+
   }
 
   @override
+  void didUpdateWidget(Widget oldWidget) {
+    controller.loadUrl(array.elementAt(_currentIndex),headers: {"MOBILEAPP": "1"});
+
+  }
+
+
+  @override
   Widget build(BuildContext context) {
+    final bool showFab = MediaQuery.of(context).viewInsets.bottom==0.0;
     return WillPopScope(
       onWillPop: () => _onBack(),
       child: ModalProgressHUD(
         inAsyncCall: inAsyncCall,
         child: Scaffold(
+          resizeToAvoidBottomInset:true,
           appBar: AppBar(
               title: Center(
                   child: Image.asset(
@@ -85,12 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 IconButton(
                     onPressed: () {
-                      showSearch(context: context, delegate: DataSearch());
+                      showSearch(context: context, delegate: DataSearch(widget.todo!.links!.search));
                     },
                     icon: Icon(Icons.search))
               ]),
           drawer: MyDrawer(
             list: widget.todo!.categories,
+
             onTap: (context, url) {
               setState(() {
 
@@ -99,25 +88,32 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           body:   WebView(
+            userAgent: "MOBILEAPP",
             javascriptMode: JavascriptMode.unrestricted,
             initialUrl: array.elementAt(_currentIndex),
+
             onWebViewCreated: (WebViewController webViewController) {
+
               controller = webViewController;
               _controller.complete(webViewController);
             },
 
             onProgress: (progress) {
               print("Finished----> ${progress}");
-              if (progress > 90) {
+              if(progress>0 && progress<90){
+                setState(() {
+                  inAsyncCall = true;
+                });
+              }
+              else if (progress > 90) {
                 setState(() {
                   inAsyncCall = false;
                 });
               }
             },
             onPageStarted: (url) {
-              setState(() {
-                inAsyncCall = true;
-              });
+              print("onPageStarted");
+
             },
             onPageFinished: (url) {
               setState(() {
@@ -125,26 +121,25 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: showFab?FloatingActionButton(
             //Floating action button on Scaffold
             backgroundColor: Colors.orange.shade700,
             onPressed: () {
               setState(() {
-                controller.loadUrl(widget.todo!.links?.cart ?? "",
-                    headers: {"MOBILEAPP": "1"});
+                controller.loadUrl(widget.todo!.links?.cart ?? "");
               });
             },
             child: Icon(
               Icons.shopping_cart,
               color: Colors.white,
             ), //icon inside button
-          ),
+          ):null,
           floatingActionButtonLocation:
           FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: MyBottomBar(
             onPressed: (context, url) {
               setState(() => {});
-              controller.loadUrl(url!, headers: {"MOBILEAPP": "1"});
+              controller.loadUrl(url!);
             },
             links: widget.todo!.links,
           ),
@@ -161,7 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (value) {
       controller.goBack(); // perform webview back operation
       return false;
-    } else {
+    }else{
+      return true;
+    }
+    /*else {
       await showDialog(
         context: context,
         barrierDismissible: false,
@@ -211,6 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (goBack) Navigator.pop(context); // If user press Yes pop the page
 
       return goBack;
-    }
+    }*/
   }
 }

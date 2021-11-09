@@ -1,5 +1,4 @@
 
-import 'package:cartswing/drawer_data.dart';
 import 'package:cartswing/model/categories.dart';
 import 'package:flutter/material.dart';
 
@@ -12,54 +11,67 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child:
+    return Padding(
+      padding: EdgeInsets.only(top: 10),
+      child: Drawer(
+        child:
+        ListView.builder(
+          shrinkWrap: true,
+          physics: ClampingScrollPhysics(),
+          itemCount: list!.length ,
+          itemBuilder: (BuildContext context, int index) {
+            return ExpansionTile(
+              textColor: Color.fromRGBO(145, 199, 77, 1.00),
+              iconColor: Color.fromRGBO(145, 199, 77, 1.00),
+              title: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Text('${list![index].name}'),
 
-      ListView.builder(
-        shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
-        itemCount: list!.length ,
-        itemBuilder: (BuildContext context, int index) {
-          return ExpansionTile(
+                onTap: () => onTap(context,list![index].url),
+              ),
+              children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: list![index].childrenDataLevelOne?.length??0,
 
-            title: ListTile(
-              leading: Text('${list![index].name}'),
+                    itemBuilder: (context, i) {
+                        return ExpansionTile(
+                          textColor: Color.fromRGBO(145, 199, 77, 1.00),
+                          iconColor: Color.fromRGBO(145, 199, 77, 1.00),
+                            title: Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: ListTile(
+                                leading: Text('${list![index].childrenDataLevelOne![i].name}'),
+                                onTap: () => onTap(context,list![index].childrenDataLevelOne![i].url),
+                              ),
+                            ),
+                            children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                    physics: ClampingScrollPhysics(),
+                                    itemCount: list![index].childrenDataLevelOne![i].childrenDataLevelTwo?.length??0,
+                                    itemBuilder: (context, j) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(left: 40.0),
+                                          child: ListTile(
 
-              onTap: () => onTap(context,list![index].url),
-            ),
-            children: [
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  itemCount: list![index].childrenDataLevelOne?.length??0,
-                  itemBuilder: (context, i) {
-                      return ExpansionTile(
-                          title: ListTile(
-                            leading: Text('${list![index].childrenDataLevelOne![i].name}'),
-                            onTap: () => onTap(context,list![index].childrenDataLevelOne![i].url),
-                          ),
-                          children: [
-                              ListView.builder(
-                                shrinkWrap: true,
-                                  physics: ClampingScrollPhysics(),
-                                  itemCount: list![index].childrenDataLevelOne![i].childrenDataLevelTwo?.length??0,
-                                  itemBuilder: (context, j) {
-                                      return ListTile(
+                                            leading: Text('${list![index].childrenDataLevelOne![i].childrenDataLevelTwo![j].name}'),
+                                            onTap: () => onTap(context,list![index].childrenDataLevelOne![i].childrenDataLevelTwo![j].url),
+                                          ),
+                                        );
+                                    },
+                                )
+                          ],
+                        );
+                    },
+                  )
+              ],
+              // onTap:() => this.onTap(context,index),
+            );
+          },
 
-                                        leading: Text('${list![index].childrenDataLevelOne![i].childrenDataLevelTwo![j].name}'),
-                                        onTap: () => onTap(context,list![index].childrenDataLevelOne![i].childrenDataLevelTwo![j].url),
-                                      );
-                                  },
-                              )
-                        ],
-                      );
-                  },
-                )
-            ],
-            // onTap:() => this.onTap(context,index),
-          );
-        },
-
+        ),
       ),
     );
   }

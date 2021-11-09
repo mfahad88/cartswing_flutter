@@ -1,6 +1,5 @@
 import 'package:cartswing/model/links.dart';
 import 'package:flutter/material.dart';
-import 'drawer_data.dart';
 
 class MyBottomBar extends StatelessWidget {
   const MyBottomBar({Key? key,required this.links,required this.onPressed}) : super(key: key);
@@ -17,10 +16,10 @@ class MyBottomBar extends StatelessWidget {
       notchMargin: 10, //notche margin between floating button and bottom appbar
       child: Row( //children inside bottom appbar
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           IconButton(icon: Icon(Icons.home, color: Colors.white,), onPressed: () => onPressed(context,links!.home),),
-          IconButton(icon: Icon(Icons.account_balance_wallet, color: Colors.white,), onPressed: () => onPressed(context,links!.wallet),),
+          Container(margin: EdgeInsets.only(right: 100),child: IconButton(icon: Icon(Icons.account_balance_wallet, color: Colors.white,), onPressed: () => onPressed(context,links!.wallet),)),
           IconButton(icon: Icon(Icons.favorite, color: Colors.white,), onPressed: () => onPressed(context,links!.wishlist),),
           IconButton(icon: Icon(Icons.account_circle, color: Colors.white,), onPressed: () => onPressed(context,links!.myaccount),),
         ],
