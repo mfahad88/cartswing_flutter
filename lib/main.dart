@@ -15,7 +15,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,7 +66,7 @@ class SplashScreenState extends State<MyHomePage> {
           }
 
           // By default, show a loading spinner.
-          return const Center(child: CircularProgressIndicator());
+          // return const Center(child: CircularProgressIndicator());
         },
 
       ),
@@ -77,7 +76,7 @@ class SplashScreenState extends State<MyHomePage> {
 
   Future<Data> fetchData() async {
     final response = await http
-        .get(Uri.parse('https://csapi.piknpak.com.pk/index.php/rest/V1/mobileapi/menu'));
+        .get(Uri.parse('https://cartswing.com/index.php/rest/V1/mobileapi/menu'));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

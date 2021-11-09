@@ -102,12 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
             onProgress: (progress) {
               print("Finished----> ${progress}");
-              if(progress>0 && progress<90){
+              if(progress>0 && progress<50){
                 setState(() {
                   inAsyncCall = true;
                 });
               }
-              else if (progress > 90) {
+              else if (progress > 50) {
                 setState(() {
                   inAsyncCall = false;
                 });
