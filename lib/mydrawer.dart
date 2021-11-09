@@ -16,18 +16,21 @@ class MyDrawer extends StatelessWidget {
       child: Drawer(
         child:
         ListView.builder(
+
           shrinkWrap: true,
           physics: ClampingScrollPhysics(),
           itemCount: list.length ,
+
           itemBuilder: (BuildContext context, int index) {
             return ExpansionTile(
               textColor: Color.fromRGBO(145, 199, 77, 1.00),
               iconColor: Color.fromRGBO(145, 199, 77, 1.00),
               title: ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Text('${list[index].name}'),
-
-                onTap: () => onTap(context,list[index].url),
+                title: Text('${list[index].name}'),
+                onTap:() {
+                  onTap(context,list[index].url);
+                  Navigator.of(context).pop();
+                },
               ),
               children: [
                   ListView.builder(
@@ -42,8 +45,13 @@ class MyDrawer extends StatelessWidget {
                             title: Padding(
                               padding: const EdgeInsets.only(left: 10.0),
                               child: ListTile(
-                                leading: Text('${list[index].childrenDataLevelOne[i].name}'),
-                                onTap: () => onTap(context,list[index].childrenDataLevelOne[i].url),
+                                leading: Text('${list[index].childrenDataLevelOne[i].name}',
+
+                                ),
+                                onTap: () {
+                                  onTap(context,list[index].childrenDataLevelOne[i].url);
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ),
                             children: [
@@ -57,7 +65,11 @@ class MyDrawer extends StatelessWidget {
                                           child: ListTile(
 
                                             leading: Text('${list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].name}'),
-                                            onTap: () => onTap(context,list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].url),
+                                            onTap: () {
+                                              onTap(context,list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].url);
+                                              Navigator.of(context).pop();
+
+                                            },
                                           ),
                                         );
                                     },
