@@ -66,7 +66,7 @@ class SplashScreenState extends State<MyHomePage> {
           }
 
           // By default, show a loading spinner.
-          // return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
 
       ),
