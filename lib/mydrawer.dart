@@ -26,7 +26,9 @@ class MyDrawer extends StatelessWidget {
               textColor: Color.fromRGBO(145, 199, 77, 1.00),
               iconColor: Color.fromRGBO(145, 199, 77, 1.00),
               title: ListTile(
-                title: Text('${list[index].name}'),
+
+                title: Container(
+                    child: Text('${list[index].name}')),
                 onTap:() {
                   onTap(context,list[index].url);
                   Navigator.of(context).pop();
@@ -39,42 +41,49 @@ class MyDrawer extends StatelessWidget {
                     itemCount: list[index].childrenDataLevelOne.length??0,
 
                     itemBuilder: (context, i) {
-                        return ExpansionTile(
-                          textColor: Color.fromRGBO(145, 199, 77, 1.00),
-                          iconColor: Color.fromRGBO(145, 199, 77, 1.00),
-                            title: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: ListTile(
-                                leading: Text('${list[index].childrenDataLevelOne[i].name}',
+                        return Container(
+                          child: ExpansionTile(
+                            textColor: Color.fromRGBO(145, 199, 77, 1.00),
+                            iconColor: Color.fromRGBO(145, 199, 77, 1.00),
+                              title: Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: ListTile(
+                                  leading: Container(
+                                    width: 150,
+                                    child: Text('${list[index].childrenDataLevelOne[i].name}',
 
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    onTap(context,list[index].childrenDataLevelOne[i].url);
+                                    Navigator.of(context).pop();
+                                  },
                                 ),
-                                onTap: () {
-                                  onTap(context,list[index].childrenDataLevelOne[i].url);
-                                  Navigator.of(context).pop();
-                                },
                               ),
-                            ),
-                            children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                    physics: ClampingScrollPhysics(),
-                                    itemCount: list[index].childrenDataLevelOne[i].childrenDataLevelTwo.length??0,
-                                    itemBuilder: (context, j) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(left: 40.0),
-                                          child: ListTile(
+                              children: [
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                      physics: ClampingScrollPhysics(),
+                                      itemCount: list[index].childrenDataLevelOne[i].childrenDataLevelTwo.length??0,
+                                      itemBuilder: (context, j) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(left: 40.0),
+                                            child: ListTile(
 
-                                            leading: Text('${list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].name}'),
-                                            onTap: () {
-                                              onTap(context,list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].url);
-                                              Navigator.of(context).pop();
+                                              leading: Container(
+                                                  width: 150,
+                                                  child: Text('${list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].name}')),
+                                              onTap: () {
+                                                onTap(context,list[index].childrenDataLevelOne[i].childrenDataLevelTwo[j].url);
+                                                Navigator.of(context).pop();
 
-                                            },
-                                          ),
-                                        );
-                                    },
-                                )
-                          ],
+                                              },
+                                            ),
+                                          );
+                                      },
+                                  )
+                            ],
+                          ),
                         );
                     },
                   )
