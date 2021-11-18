@@ -27,8 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String url;
   final int _currentIndex = 0;
   List array = [];
-  bool isSearch = true;
+  bool isSearch = false;
   WebViewController webViewController;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -60,13 +61,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 'images/app_icon_transparent.png',
                 fit: BoxFit.cover,
                 height: 30,
-              )),
+              ),
+          ),
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
           actions: [
             IconButton(
                 onPressed: () {
-                  showSearch(context: context, delegate: DataSearch(widget.todo.links.search));
+                  setState(() {
+                    isSearch=isSearch==true?false:true;
+                  });
+                  // showSearch(context: context, delegate: DataSearch(widget.todo.links.search));
                 },
                 icon: Icon(Icons.search))
           ]),
@@ -79,10 +84,32 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
       ),
-      body:   MyWebView(url,
-      onWebViewCreated:(context, webViewController) {
-        this.webViewController=webViewController;
-      } ,
+      body:   Column(
+        children: [
+      Visibility(
+        visible: isSearch,
+        child: TextField(
+        decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+          hintText: 'Search here'
+          ),
+          onSubmitted: (value) {
+            setState(() {
+
+              this.webViewController.loadUrl("${widget.todo.links.search}${value}");
+              isSearch=false;
+            });
+          },
+        ),
+      ),
+          Expanded(
+            child: MyWebView(url,
+            onWebViewCreated:(context, webViewController) {
+              this.webViewController=webViewController;
+            } ,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: showFab?FloatingActionButton(
 

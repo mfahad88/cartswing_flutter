@@ -63,10 +63,11 @@ class MyWebView extends StatelessWidget {
     var value = await controller.canGoBack(); // check webview can go back
     if (value) {
       controller.goBack(); // perform webview back operation
-      return false;
+      goBack= false;
     }else{
-      return true;
+      goBack=true;
     }
+    return goBack;
     /*else {
       await showDialog(
         context: context,
