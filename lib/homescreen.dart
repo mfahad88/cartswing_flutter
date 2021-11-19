@@ -103,10 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
           Expanded(
-            child: MyWebView(url,
-            onWebViewCreated:(context, webViewController) {
-              this.webViewController=webViewController;
-            } ,
+            child: WillPopScope(
+              onWillPop: () => _onBack(),
+              child: MyWebView(url,
+              onWebViewCreated:(context, webViewController) {
+                this.webViewController=webViewController;
+              } ,
+              ),
             ),
           ),
         ],
@@ -138,7 +141,70 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<bool> _onBack() async {
 
+    bool goBack = false;
+    var value = await webViewController.canGoBack(); // check webview can go back
+    if (value) {
+      webViewController.goBack(); // perform webview back operation
+      goBack= false;
+    }else{
+      goBack=true;
+    }
+    print("Backpresssed---->${goBack}");
+    return goBack;
+    /*else {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => new AlertDialog(
+          title:
+              new Text('Confirmation ', style: TextStyle(color: Colors.purple)),
+
+          // Are you sure?
+
+          content: new Text('Do you want exit app ? '),
+
+          // Do you want to go back?
+
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                // Navigator.of(context).pop(false);
+                Platform.isIOS
+                    ? exit(0)
+                    : SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+
+                setState(() {
+                  goBack = false;
+                });
+              },
+
+              child: new Text('Yes'), // No
+            ),
+            new FlatButton(
+              onPressed: () {
+
+                Navigator.pop(context,false);
+                // Navigator.of(context).pop(true);
+
+                setState(() {
+                  goBack = true;
+                });
+              },
+
+              child: new Text('No'), // Yes
+
+            ),
+          ],
+        ),
+      );
+
+      if (goBack) Navigator.pop(context); // If user press Yes pop the page
+
+      return goBack;
+    }*/
+  }
 
 
 }
