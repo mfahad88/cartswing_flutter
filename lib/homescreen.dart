@@ -12,7 +12,6 @@ import 'package:cartswing/mydrawer.dart';
 import 'package:cartswing/mywebview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -95,7 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onSubmitted: (value) {
             setState(() {
-
               this.webViewController.loadUrl("${widget.todo.links.search}${value}");
               isSearch=false;
             });
